@@ -59,6 +59,11 @@ class XnnpackConan(ConanFile):
         extracted_dir = glob.glob("XNNPACK-*")[0]
         os.rename(extracted_dir, self._source_subfolder)
 
+    def _patch_sources(self):
+        tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
+                              "LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}",
+                              "LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}")
+
     def _configure_cmake(self):
         if self._cmake:
             return self._cmake
@@ -74,6 +79,7 @@ class XnnpackConan(ConanFile):
         return self._cmake
 
     def build(self):
+        self._patch_sources()
         cmake = self._configure_cmake()
         cmake.build()
 
