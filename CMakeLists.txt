@@ -18,4 +18,8 @@ set_property(TARGET fxdiv PROPERTY INTERFACE_LINK_LIBRARIES CONAN_PKG::fxdiv)
 add_library(fp16 INTERFACE IMPORTED)
 set_property(TARGET fp16 PROPERTY INTERFACE_LINK_LIBRARIES CONAN_PKG::fp16)
 
+if(MSVC AND BUILD_SHARED_LIBS)
+    set(WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+endif()
+
 add_subdirectory(source_subfolder)

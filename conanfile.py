@@ -1,4 +1,5 @@
 from conans import ConanFile, CMake, tools
+from conans.errors import ConanInvalidConfiguration
 import glob
 import os
 
@@ -47,6 +48,12 @@ class XnnpackConan(ConanFile):
             del self.options.fPIC
         del self.settings.compiler.libcxx
         del self.settings.compiler.cppstd
+        compiler = self.settings.compiler
+        compiler_version = tools.Version(compiler.version)
+        if (compiler == "gcc" and compiler_version < "6") or \
+           (compiler == "clang" and compiler_version < "5") or \
+           (compiler == "Visual Studio" and compiler_version < "16"):
+            raise ConanInvalidConfiguration("xnnpack doesn't support {} {}".format(str(compiler), compiler.version))
 
     def requirements(self):
         self.requires("cpuinfo/cci.20201217")
